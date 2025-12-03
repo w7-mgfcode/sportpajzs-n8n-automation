@@ -1,0 +1,169 @@
+{
+  "name": "Error Notification - Hiba Értesítés",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "error-notification",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "webhookId": ""
+    },
+    {
+      "parameters": {
+        "jsCode": "// 🔔 Hiba üzenet formázás magyarul\n// Ez a node a bejövő hiba adatokat formázza\n\nconst inputData = $input.first()?.json || {};\n\n// Hiba részletek kibontása\nconst workflowNev = inputData.workflow || inputData.workflowName || 'Ismeretlen workflow';\nconst hibaUzenet = inputData.error?.message || inputData.errorMessage || inputData.uzenet || 'Nincs részlet';\nconst hibaIdopont = inputData.datum || inputData.timestamp || new Date().toLocaleString('hu-HU');\nconst hibaNode = inputData.node || inputData.nodeName || 'Ismeretlen node';\nconst executionId = inputData.executionId || 'N/A';\n\n// Hiba típus meghatározása\nlet hibaTipus = 'Általános hiba';\nlet javasoltMegoldas = '';\n\nif (hibaUzenet.toLowerCase().includes('credential') || hibaUzenet.toLowerCase().includes('oauth') || hibaUzenet.toLowerCase().includes('token')) {\n  hibaTipus = '🔑 OAuth / Hitelesítési hiba';\n  javasoltMegoldas = `\n  📌 Javasolt megoldás:\n  1. Menj az n8n → Credentials menübe\n  2. Keresd meg a hibás credential-t (Gmail vagy Google Sheets)\n  3. Klikk rá és válaszd: \"Reauthorize\" vagy \"Reconnect\"\n  4. Jelentkezz be újra a Google fiókodba\n  5. Hagyd jóvá az engedélyeket\n  `;\n} else if (hibaUzenet.toLowerCase().includes('column') || hibaUzenet.toLowerCase().includes('field')) {\n  hibaTipus = '📋 Sheet / Oszlop hiba';\n  javasoltMegoldas = `\n  📌 Javasolt megoldás:\n  1. Nyisd meg a Google Sheet-et\n  2. Ellenőrizd az oszlopneveket (ID, Név, Email, Típus, Küldve, Válasz, Megjegyzés)\n  3. Győződj meg róla, hogy nincs felesleges szóköz az oszlopnevekben\n  4. Ha átnevezted az oszlopokat, frissítsd a workflow-t is\n  `;\n} else if (hibaUzenet.toLowerCase().includes('rate') || hibaUzenet.toLowerCase().includes('limit') || hibaUzenet.toLowerCase().includes('quota')) {\n  hibaTipus = '⚠️ Limit túllépés';\n  javasoltMegoldas = `\n  📌 Javasolt megoldás:\n  1. Gmail személyes fiók limit: 500 email/nap\n  2. Várj 24 órát a limit resetelésére\n  3. Vagy használj Google Workspace fiókot (2000 email/nap limit)\n  4. Csökkentsd az egy futásban küldött emailek számát\n  `;\n} else if (hibaUzenet.toLowerCase().includes('permission') || hibaUzenet.toLowerCase().includes('access')) {\n  hibaTipus = '🚫 Hozzáférési hiba';\n  javasoltMegoldas = `\n  📌 Javasolt megoldás:\n  1. Ellenőrizd a Google Sheet hozzáférési jogokat\n  2. Győződj meg róla, hogy a fióknak van szerkesztési joga\n  3. Próbáld meg újra-engedélyezni a Google Sheets credential-t\n  `;\n}\n\n// Formázott hiba email összeállítása\nconst formattedMessage = `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n⚠️  n8n WORKFLOW HIBA ÉRTESÍTÉS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n🔴 HIBA TÍPUS: ${hibaTipus}\n\n📋 RÉSZLETEK:\n  • Workflow: ${workflowNev}\n  • Node: ${hibaNode}\n  • Időpont: ${hibaIdopont}\n  • Execution ID: ${executionId}\n\n💬 HIBA ÜZENET:\n${hibaUzenet}\n\n${javasoltMegoldas}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n🔧 MIT TEHETSZ:\n\n1. Nézd meg az n8n Executions történetet\n2. Klikkelj rá a hibás végrehajtásra\n3. Ellenőrizd melyik node-nál állt le\n4. Olvasd el a hibaüzenetet\n5. Kövesd a fenti javasolt megoldást\n\n📧 Ha nem tudod megoldani:\n  • Készíts screenshot-ot az n8n execution log-ról\n  • Küld el emailben a support részére\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n🤖 Ez egy automatikus értesítés az n8n workflow rendszerből.\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;\n\nreturn [{\n  json: {\n    subject: `⚠️ n8n Hiba: ${workflowNev} - ${hibaTipus}`,\n    message: formattedMessage,\n    workflowNev: workflowNev,\n    hibaTipus: hibaTipus,\n    hibaIdopont: hibaIdopont,\n    originalError: inputData\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300],
+      "id": "format-error-message",
+      "name": "Format Error Message HU"
+    },
+    {
+      "parameters": {
+        "sendTo": "czunidaniel9@gmail.com",
+        "subject": "={{ $json.subject }}",
+        "message": "={{ $json.message }}",
+        "options": {}
+      },
+      "id": "send-alert-email",
+      "name": "Send Alert to Dani",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [650, 300],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Personal Gmail"
+        }
+      },
+      "notes": "⚠️ FONTOS: Állítsd be a saját (személyes) Gmail credential-edet!"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Datum": "={{ $json.hibaIdopont }}",
+            "Workflow": "={{ $json.workflowNev }}",
+            "Hiba_Tipus": "={{ $json.hibaTipus }}",
+            "Uzenet": "={{ $json.originalError.error?.message || 'N/A' }}"
+          },
+          "schema": [
+            {
+              "id": "Datum",
+              "displayName": "Datum",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Workflow",
+              "displayName": "Workflow",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Hiba_Tipus",
+              "displayName": "Hiba_Tipus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Uzenet",
+              "displayName": "Uzenet",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [850, 300],
+      "id": "log-to-sheet",
+      "name": "Log Error to Sheet (Optional)",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "notes": "OPCIONÁLIS: Ha szeretnéd naplózni a hibákat egy Sheet-ben, állítsd be a Sheet URL-t. Ha nem kell, törölheted ezt a node-ot.",
+      "disabled": true
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Format Error Message HU",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Error Message HU": {
+      "main": [
+        [
+          {
+            "node": "Send Alert to Dani",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Alert to Dani": {
+      "main": [
+        [
+          {
+            "node": "Log Error to Sheet (Optional)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Budapest"
+  },
+  "versionId": "",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "id": "",
+  "tags": []
+}

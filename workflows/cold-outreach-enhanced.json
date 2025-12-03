@@ -1,0 +1,420 @@
+{
+  "name": "Sportbiztosítás Cold Outreach - ENHANCED",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 10 * * 2-4"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [100, 300],
+      "id": "schedule-trigger",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list"
+        },
+        "options": {}
+      },
+      "id": "google-sheets-read",
+      "name": "Read Contacts from Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [500, 300],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "notes": "⚠️ FONTOS: Állítsd be a saját Google Sheet URL-edet!"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ✅ Email formátum validálás\n// Csak a valid email címekkel rendelkező sorokat engedjük tovább\n\nconst emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n\nreturn items.filter(item => {\n  const email = item.json.Email || item.json['e-mail cím'] || item.json['e-mail cím '];\n  \n  // Ellenőrizzük hogy van-e email cím\n  if (!email) {\n    console.log(`❌ Hiányzó email: ${item.json.Név || item.json['Név ']}`);\n    return false;\n  }\n  \n  // Validáljuk az email formátumot\n  if (!emailRegex.test(String(email).trim())) {\n    console.log(`❌ Érvénytelen email formátum: ${email}`);\n    return false;\n  }\n  \n  // Ellenőrizzük hogy van-e név\n  const nev = item.json.Név || item.json['Név '];\n  if (!nev || String(nev).trim() === '') {\n    console.log(`❌ Hiányzó név`);\n    return false;\n  }\n  \n  return true;\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 300],
+      "id": "validate-emails",
+      "name": "Validate Emails"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Csak azokat a sorokat engedjük tovább,\n// ahol a \"Küldve\" oszlop üres vagy nincs kitöltve.\n\nreturn items.filter(item => {\n  // A Google Sheets header neve pontosan: \"Küldve\"\n  const status = item.json[\"Küldve\"];\n\n  // Ha nincs érték, vagy csak whitespace → KÜLDHETŐ\n  if (!status || String(status).trim() === \"\") {\n    return true;\n  }\n\n  // Ha már van benne érték (pl. \"küldve\" vagy timestamp) → NE küldje újra\n  return false;\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300],
+      "id": "filter-unsent",
+      "name": "Filter Unsent Contacts"
+    },
+    {
+      "parameters": {
+        "batchSize": 50,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [1100, 300],
+      "id": "rate-limit",
+      "name": "Rate Limit (50/batch)"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email || $json['e-mail cím'] || $json['e-mail cím '] }}",
+        "subject": "Sportpajzs – rövid bemutatkozás",
+        "message": "=<!DOCTYPE html>\n<html lang=\"hu\">\n<head>\n<meta charset=\"UTF-8\">\n<title>Sportpajzs – bemutatkozás</title>\n</head>\n<body style=\"font-family: Arial, sans-serif; color:#222; line-height:1.5;\">\n\n<p><strong>Tisztelt {{ $json.Név || $json['Név '] }}!</strong></p>\n\n<p>\nSzeretném röviden bemutatni a Sportpajzsot.  \nA lenti weboldalon megismerheti, hogyan nyújtunk védelmet hobbistáknak, amatőr és profi sportolóknak,\nilletve mindenkinek, aki aktív életet él:\n</p>\n\n<p>\n👉 <a href=\"https://sportpajzs.hu/\" target=\"_blank\">https://sportpajzs.hu/</a>\n</p>\n\n<p>\nSokan úgy gondolják, hogy a bankkártyához vagy lakásbiztosításhoz kötött balesetbiztosítás majd „úgyis segít".\nA valóságban ezek legtöbbször csak minimális összeget fizetnek – pont akkor, amikor a gyors és valódi támogatás lenne a legfontosabb.\n</p>\n\n<p>\nEgy egyszerű példa: ha valaki rendszeresen fut, kimegy az erdőbe és egy rossz lépés után kimegy vagy eltörik a bokája,\na vizsgálatok, röntgen és kontrollok akár több tízezer forintot is jelenthetnek.\nA mi megoldásaink ilyen helyzetekben valódi, azonnal érezhető segítséget nyújtanak.\n</p>\n\n<p>\nHa kérdése van, szívesen segítünk – telefonon vagy e-mailben is bármikor bizalommal fordulhat hozzánk.\nEmellett együttműködési lehetőséget is kínálunk: partnereinket feltüntetjük weboldalunkon.\n</p>\n\n<br><br>\n\n<p>Üdvözlettel,<br>\n<strong>Sportpajzs csapata</strong></p>\n\n<img src=\"https://lh3.googleusercontent.com/d/1ZKugX-lOqelGhnlByHNwx51H11BcnuGM=s150\"\n     alt=\"Sportpajzs pecsét\"\n     style=\"width:150px; height:auto; display:block; margin-top:10px;\">\n\n</body>\n</html>\n",
+        "options": {}
+      },
+      "id": "gmail-send",
+      "name": "Send Intro Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [1300, 300],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Sportpajzs Gmail"
+        }
+      },
+      "notes": "⚠️ FONTOS: Állítsd be a saját Gmail credential-edet!"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ✅ Időbélyeg generálás\n// Formátum: 2025-12-03 10:00:15\n\nconst now = new Date();\nconst timestamp = now.toLocaleString('hu-HU', {\n  year: 'numeric',\n  month: '2-digit',\n  day: '2-digit',\n  hour: '2-digit',\n  minute: '2-digit',\n  second: '2-digit',\n  hour12: false\n}).replace(',', '');\n\n// Hozzáadjuk a timestampet az itemhez\nreturn items.map(item => {\n  return {\n    json: {\n      ...item.json,\n      kuldve_timestamp: timestamp,\n      sikeres: true\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1500, 300],
+      "id": "format-timestamp",
+      "name": "Format Timestamp"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Küldve": "={{ $json.kuldve_timestamp }}"
+          },
+          "matchingColumns": ["ID"],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Név",
+              "displayName": "Név",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Típus",
+              "displayName": "Típus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Küldve",
+              "displayName": "Küldve",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Válasz",
+              "displayName": "Válasz",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Megjegyzés",
+              "displayName": "Megjegyzés",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [1700, 300],
+      "id": "update-sheet",
+      "name": "Mark as Sent",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "notes": "⚠️ FONTOS: Ugyanaz a Sheet credential mint a Read node-ban!"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ✅ Végrehajtás naplózás\n// Összesítjük hány emailt küldtünk\n\nconst totalSent = items.length;\nconst timestamp = new Date().toLocaleString('hu-HU');\n\nconsole.log(`✅ Sikeres végrehajtás: ${totalSent} email elküldve - ${timestamp}`);\n\n// Visszaadjuk az összesítést\nreturn [{\n  json: {\n    sikeres_darab: totalSent,\n    datum: timestamp,\n    statusz: 'sikeres'\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1900, 300],
+      "id": "log-execution",
+      "name": "Log Execution"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ❌ Hiba kezelés - Sheet olvasás\n// Ez a node akkor fut le, ha a Google Sheets Read node hibát dob\n\nconst error = $('Read Contacts from Sheet').error;\n\nconst errorMessage = `\n❌ HIBA: Google Sheets olvasás sikertelen!\n\n📋 Részletek:\n- Időpont: ${new Date().toLocaleString('hu-HU')}\n- Hiba típus: ${error?.message || 'Ismeretlen hiba'}\n- Workflow: Sportbiztosítás Cold Outreach\n\n🔧 Lehetséges okok:\n1. Google Sheets OAuth lejárt → Újra-engedélyezés szükséges\n2. Sheet törölve vagy áthelyezve\n3. Nincs hozzáférési jog a sheet-hez\n4. Sheet URL megváltozott\n\n💡 Mit tegyél:\n1. n8n → Credentials → Google Sheets account → Reauthorize\n2. Ellenőrizd hogy a Sheet URL helyes\n3. Ellenőrizd a Google Sheet hozzáférési jogokat\n`;\n\nreturn [{\n  json: {\n    hiba_tipus: 'sheet_olvasas',\n    uzenet: errorMessage,\n    workflow: 'Cold Outreach',\n    datum: new Date().toISOString()\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 500],
+      "id": "error-sheet-read",
+      "name": "Error: Sheet Read Failed"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ❌ Hiba kezelés - Email küldés\n// Ez a node akkor fut le, ha a Gmail Send node hibát dob\n\nconst error = $('Send Intro Email').error;\nconst failedContact = $input.first()?.json;\n\nconst errorMessage = `\n❌ HIBA: Email küldés sikertelen!\n\n📋 Részletek:\n- Időpont: ${new Date().toLocaleString('hu-HU')}\n- Hiba típus: ${error?.message || 'Ismeretlen hiba'}\n- Sikertelen kontakt: ${failedContact?.Név || failedContact?.['Név '] || 'N/A'}\n- Email cím: ${failedContact?.Email || failedContact?.['e-mail cím'] || failedContact?.['e-mail cím '] || 'N/A'}\n- Workflow: Sportbiztosítás Cold Outreach\n\n🔧 Lehetséges okok:\n1. Gmail OAuth lejárt → Újra-engedélyezés szükséges\n2. Napi email limit elérve (500/nap)\n3. Érvénytelen email cím\n4. Gmail fiók blokkolva vagy felfüggesztve\n\n💡 Mit tegyél:\n1. n8n → Credentials → Sportpajzs Gmail → Reauthorize\n2. Ellenőrizd a Gmail fiók státuszát\n3. Nézd meg hány emailt küldtél ma (limit: 500/nap)\n4. Ellenőrizd az email cím formátumát\n`;\n\nreturn [{\n  json: {\n    hiba_tipus: 'email_kuldes',\n    uzenet: errorMessage,\n    workflow: 'Cold Outreach',\n    datum: new Date().toISOString(),\n    sikertelen_kontakt: failedContact\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1500, 500],
+      "id": "error-email-send",
+      "name": "Error: Email Send Failed"
+    },
+    {
+      "parameters": {
+        "sendTo": "czunidaniel9@gmail.com",
+        "subject": "⚠️ n8n Workflow Hiba - Cold Outreach",
+        "message": "={{ $json.uzenet }}",
+        "options": {}
+      },
+      "id": "send-error-alert",
+      "name": "Send Error Alert to Dani",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [1100, 600],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Personal Gmail"
+        }
+      },
+      "notes": "Ez a személyes Gmail fiókodról küldi az értesítést!"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read Contacts from Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Contacts from Sheet": {
+      "main": [
+        [
+          {
+            "node": "Validate Emails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Emails": {
+      "main": [
+        [
+          {
+            "node": "Filter Unsent Contacts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Unsent Contacts": {
+      "main": [
+        [
+          {
+            "node": "Rate Limit (50/batch)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rate Limit (50/batch)": {
+      "main": [
+        [
+          {
+            "node": "Send Intro Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Intro Email": {
+      "main": [
+        [
+          {
+            "node": "Format Timestamp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Timestamp": {
+      "main": [
+        [
+          {
+            "node": "Mark as Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark as Sent": {
+      "main": [
+        [
+          {
+            "node": "Log Execution",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Contacts from Sheet": {
+      "main": [
+        [
+          {
+            "node": "Validate Emails",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error: Sheet Read Failed",
+            "type": "error",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Intro Email": {
+      "main": [
+        [
+          {
+            "node": "Format Timestamp",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error: Email Send Failed",
+            "type": "error",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error: Sheet Read Failed": {
+      "main": [
+        [
+          {
+            "node": "Send Error Alert to Dani",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error: Email Send Failed": {
+      "main": [
+        [
+          {
+            "node": "Send Error Alert to Dani",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Budapest",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "id": "",
+  "tags": []
+}

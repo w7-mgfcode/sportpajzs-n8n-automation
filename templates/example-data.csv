@@ -1,0 +1,6 @@
+ID,Név,Email,Típus,Küldve,Válasz,Megjegyzés
+SP001,Budapest Futóklub,info@budapestfuto.hu,Sportklub,,,
+SP002,Csepel Atlétikai Club,contact@csepelatletika.hu,Egyesület,,,
+SP003,Margitsziget Kerékpár Egyesület,hello@margitszigetkerekpar.hu,Egyesület,,,
+SP004,Dunakeszi Sportegyesület,info@dunakeszisport.hu,Sportegyesület,,,
+SP005,Teszt Kapcsolat (NE KÜLDD!),teszt@example.com,Teszt,2025-12-03 10:15:30,Tesztelve,"Ez egy teszt sor - nem fog emailt kapni mert a Küldve oszlop már ki van töltve"
