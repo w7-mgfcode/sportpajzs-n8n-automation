@@ -1,0 +1,14 @@
+name: Validate Workflows
+on: [push, pull_request]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install jq
+        run: sudo apt-get install jq
+      - name: Validate JSON Syntax
+        run: |
+          # This command fails if the JSON is invalid
+          jq empty workflows/*.json
+          echo "✅ JSON syntax is valid."
