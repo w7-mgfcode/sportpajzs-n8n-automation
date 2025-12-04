@@ -93,7 +93,7 @@ ID, Név, Email, Típus, Küldve, Válasz, Megjegyzés
 ### 🚀 Telepítés/Frissítés
 
 #### Új telepítés (v2.0)
-1. Töltsd le a legújabb release-t: [v2.0.0](https://github.com/yourusername/sportpajzs-n8n-automation/releases/tag/v2.0.0)
+1. Töltsd le a legújabb release-t: [v2.0.0](https://github.com/w7-mgfcode/sportpajzs-n8n-automation/releases/tag/v2.0.0)
 2. Kövesd a [TELEPITES.md](docs/hu/TELEPITES.md) útmutatót
 
 #### Frissítés v1.0-ról v2.0-ra
@@ -207,7 +207,7 @@ n8n import --file=cold-outreach-v1-backup.json
 ## Támogatás & Hibák
 
 Ha hibát találsz vagy kérdésed van:
-- **GitHub Issues:** [https://github.com/yourusername/sportpajzs-n8n-automation/issues](https://github.com/yourusername/sportpajzs-n8n-automation/issues)
+- **GitHub Issues:** [https://github.com/w7-mgfcode/sportpajzs-n8n-automation/issues](https://github.com/w7-mgfcode/sportpajzs-n8n-automation/issues)
 - **Email:** czunidaniel9@gmail.com
 
 ---

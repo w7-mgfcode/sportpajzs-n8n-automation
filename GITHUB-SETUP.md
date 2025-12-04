@@ -50,7 +50,7 @@ gh repo create sportpajzs-n8n-automation \
 After creating the repository on GitHub, you'll see a setup page with the remote URL. It looks like:
 
 ```
-https://github.com/YOUR_USERNAME/sportpajzs-n8n-automation.git
+https://github.com/w7-mgfcode/sportpajzs-n8n-automation.git
 ```
 
 ### Add the remote
@@ -59,7 +59,7 @@ https://github.com/YOUR_USERNAME/sportpajzs-n8n-automation.git
 cd /home/w7-shellsnake/w7-DEV_X1/external_FB/czuni_dani/sportpajzs-n8n-automation
 
 # Add GitHub remote
-git remote add origin https://github.com/YOUR_USERNAME/sportpajzs-n8n-automation.git
+git remote add origin https://github.com/w7-mgfcode/sportpajzs-n8n-automation.git
 
 # Verify remote was added
 git remote -v
@@ -67,8 +67,8 @@ git remote -v
 
 **Expected output:**
 ```
-origin  https://github.com/YOUR_USERNAME/sportpajzs-n8n-automation.git (fetch)
-origin  https://github.com/YOUR_USERNAME/sportpajzs-n8n-automation.git (push)
+origin  https://github.com/w7-mgfcode/sportpajzs-n8n-automation.git (fetch)
+origin  https://github.com/w7-mgfcode/sportpajzs-n8n-automation.git (push)
 ```
 
 ---
@@ -100,7 +100,7 @@ Delta compression using up to 8 threads
 Compressing objects: 100% (11/11), done.
 Writing objects: 100% (14/14), XX.XX KiB | X.XX MiB/s, done.
 Total 14 (delta 0), reused 0 (delta 0)
-To https://github.com/YOUR_USERNAME/sportpajzs-n8n-automation.git
+To https://github.com/w7-mgfcode/sportpajzs-n8n-automation.git
  * [new branch]      main -> main
 Branch 'main' set up to track remote branch 'main' from 'origin'.
 ```
@@ -140,7 +140,7 @@ cat ~/.ssh/id_ed25519.pub
 
 Then change remote to SSH:
 ```bash
-git remote set-url origin git@github.com:YOUR_USERNAME/sportpajzs-n8n-automation.git
+git remote set-url origin git@github.com:w7-mgfcode/sportpajzs-n8n-automation.git
 git push -u origin main
 ```
 
@@ -254,7 +254,7 @@ If you have a demo or documentation site, add it here.
    ## 🆘 Támogatás
 
    - 📖 [Dokumentáció](docs/hu/)
-   - 🐛 [GitHub Issues](https://github.com/YOUR_USERNAME/sportpajzs-n8n-automation/issues)
+   - 🐛 [GitHub Issues](https://github.com/w7-mgfcode/sportpajzs-n8n-automation/issues)
    - 📧 Email: czunidaniel9@gmail.com
 
    ---
@@ -311,7 +311,7 @@ Szia Dániel!
 Elkészítettem a javított n8n workflow automatizálást! 🎉
 
 🔗 **GitHub Repository:**
-https://github.com/YOUR_USERNAME/sportpajzs-n8n-automation
+https://github.com/w7-mgfcode/sportpajzs-n8n-automation
 
 ## 📥 Letöltés
 
@@ -323,7 +323,7 @@ https://github.com/YOUR_USERNAME/sportpajzs-n8n-automation
 **VAGY**
 
 **Release letöltés (ajánlott):**
-1. Menj: https://github.com/YOUR_USERNAME/sportpajzs-n8n-automation/releases/tag/v2.0.0
+1. Menj: https://github.com/w7-mgfcode/sportpajzs-n8n-automation/releases/tag/v2.0.0
 2. Töltsd le: **Source code (zip)**
 
 ## 📚 Dokumentáció (Magyarul!)
@@ -473,8 +473,8 @@ Follow semantic versioning:
 # 1. Navigate to repository
 cd /home/w7-shellsnake/w7-DEV_X1/external_FB/czuni_dani/sportpajzs-n8n-automation
 
-# 2. Add remote (replace YOUR_USERNAME)
-git remote add origin https://github.com/YOUR_USERNAME/sportpajzs-n8n-automation.git
+# 2. Add remote
+git remote add origin https://github.com/w7-mgfcode/sportpajzs-n8n-automation.git
 
 # 3. Rename branch
 git branch -M main
@@ -483,7 +483,7 @@ git branch -M main
 git push -u origin main
 
 # 5. Create release on GitHub (via web interface)
-# Go to: https://github.com/YOUR_USERNAME/sportpajzs-n8n-automation/releases/new
+# Go to: https://github.com/w7-mgfcode/sportpajzs-n8n-automation/releases/new
 
 # 6. Share with Dani
 # Send email with repository URL and quick start instructions
@@ -491,9 +491,9 @@ git push -u origin main
 
 ---
 
-**Repository URL:** `https://github.com/YOUR_USERNAME/sportpajzs-n8n-automation`
+**Repository URL:** `https://github.com/w7-mgfcode/sportpajzs-n8n-automation`
 
-**Release v2.0.0 URL:** `https://github.com/YOUR_USERNAME/sportpajzs-n8n-automation/releases/tag/v2.0.0`
+**Release v2.0.0 URL:** `https://github.com/w7-mgfcode/sportpajzs-n8n-automation/releases/tag/v2.0.0`
 
 ---
 
