@@ -53,6 +53,8 @@ After creating the repository on GitHub, you'll see a setup page with the remote
 https://github.com/w7-mgfcode/sportpajzs-n8n-automation.git
 ```
 
+> **Note for forking:** If you forked this repository, replace `w7-mgfcode` with your own GitHub username in all the remote URLs below.
+
 ### Add the remote
 
 ```bash
@@ -117,7 +119,7 @@ Branch 'main' set up to track remote branch 'main' from 'origin'.
 4. Copy the token (you won't see it again!)
 5. Use token as password when pushing:
    ```bash
-   Username: YOUR_USERNAME
+   Username: w7-mgfcode
    Password: ghp_XXXXXXXXXXXXXXXXXXXXXXXXXXXXX
    ```
 
