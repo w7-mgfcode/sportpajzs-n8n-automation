@@ -3,7 +3,7 @@
 > **n8n workflow automatizálás sportbiztosítási cold outreach emailekhez**
 > Magyar nyelvű dokumentáció | Teljes körű hibaelhárítás | Lépésről lépésre telepítés
 
-[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/yourusername/sportpajzs-n8n-automation/releases)
+[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/w7-mgfcode/sportpajzs-n8n-automation/releases)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Language](https://img.shields.io/badge/nyelv-Magyar-red.svg)]()
 [![n8n](https://img.shields.io/badge/n8n-compatible-orange.svg)](https://n8n.io)
@@ -76,14 +76,14 @@ Automatikusan küld bemutatkozó emaileket potenciális partnereknek (sportklubo
 **Opció A: GitHub Release (ajánlott)**
 ```bash
 # Menj a Releases oldalra
-https://github.com/yourusername/sportpajzs-n8n-automation/releases/latest
+https://github.com/w7-mgfcode/sportpajzs-n8n-automation/releases/latest
 
 # Töltsd le: sportpajzs-n8n-v2.0.0.zip
 ```
 
 **Opció B: Git clone**
 ```bash
-git clone https://github.com/yourusername/sportpajzs-n8n-automation.git
+git clone https://github.com/w7-mgfcode/sportpajzs-n8n-automation.git
 cd sportpajzs-n8n-automation
 ```
 
@@ -200,7 +200,7 @@ sportpajzs-n8n-automation/
 
 ## 📦 Verzió történet
 
-### [v2.0.0](https://github.com/yourusername/sportpajzs-n8n-automation/releases/tag/v2.0.0) - 2025-12-03
+### [v2.0.0](https://github.com/w7-mgfcode/sportpajzs-n8n-automation/releases/tag/v2.0.0) - 2025-12-03
 
 #### ✨ Új funkciók
 - Email validálás hozzáadva
@@ -263,7 +263,7 @@ Lásd: [docs/hu/GYIK.md](docs/hu/GYIK.md)
    - [Hibaelhárítás](docs/hu/HIBAELHARITAS.md)
 
 2. **Nyiss egy Issue-t:**
-   - [GitHub Issues](https://github.com/yourusername/sportpajzs-n8n-automation/issues/new)
+   - [GitHub Issues](https://github.com/w7-mgfcode/sportpajzs-n8n-automation/issues/new)
    - Írj le mindent részletesen
    - Csatolj screenshot-okat
 
