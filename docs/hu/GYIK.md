@@ -316,7 +316,7 @@ Ez a projekt **2 workflow**-t használ (cold-outreach + error-notification).
 3. Trigger: Check if `(Válasz == "Nem válaszolt") AND (Küldve + 7 nap <= Ma)`
 4. Küldd a follow-up emailt
 
-Ha érdekel, nyiss egy [GitHub Issue](https://github.com/yourusername/sportpajzs-n8n-automation/issues/new)-t!
+Ha érdekel, nyiss egy [GitHub Issue](https://github.com/w7-mgfcode/sportpajzs-n8n-automation/issues/new)-t!
 
 ### Lehet-e válaszokat automatikusan trackeln?
 
@@ -380,7 +380,7 @@ Ez a workflow működik **bármilyen** cold outreach kampányhoz!
    - [Hibaelhárítás](HIBAELHARITAS.md)
 
 2. **GitHub Issues:**
-   - [Új kérdés](https://github.com/yourusername/sportpajzs-n8n-automation/issues/new)
+   - [Új kérdés](https://github.com/w7-mgfcode/sportpajzs-n8n-automation/issues/new)
    - Keres létező válaszokat
 
 3. **Email:**
